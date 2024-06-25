@@ -90,7 +90,28 @@ const Video: React.FC<IvideotNewsProps> = (props: IvideotNewsProps) => {
             <div className={styles.PlayBtn}>
               <div className={styles.PlayIcon}>
                 <button className={styles.Play} onClick={handleTogglePlay}>
-                  
+                  <svg width="500" height="500" viewBox="0 0 123 123" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g filter="url(#filter0_bd_252_3)">
+                      <circle cx="61.5" cy="57.5" r="57.5" fill="white" fill-opacity="0.28" shape-rendering="crispEdges" />
+                    </g>
+                    <path d="M91.3047 55.8401C93.2907 57.0187 93.2561 59.9052 91.2424 61.0359L49.4274 84.5145C47.4137 85.6452 44.9311 84.172 44.9588 81.8627L45.5333 33.9105C45.5609 31.6013 48.078 30.188 50.0641 31.3665L91.3047 55.8401Z" fill="white" />
+                    <defs>
+                      <filter id="filter0_bd_252_3" x="-4.3" y="-8.3" width="131.6" height="131.6" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                        <feGaussianBlur in="BackgroundImageFix" stdDeviation="4.15" />
+                        <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_252_3" />
+                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                        <feOffset dy="4" />
+                        <feGaussianBlur stdDeviation="2" />
+                        <feComposite in2="hardAlpha" operator="out" />
+                        <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.13 0" />
+                        <feBlend mode="normal" in2="effect1_backgroundBlur_252_3" result="effect2_dropShadow_252_3" />
+                        <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_252_3" result="shape" />
+                      </filter>
+                    </defs>
+                  </svg>
+
+
                 </button>
               </div>
             </div>
