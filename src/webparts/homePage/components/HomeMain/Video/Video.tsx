@@ -5,11 +5,15 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 interface IvideotNewsProps {
   context: WebPartContext;
 }
-
 const Video: React.FC<IvideotNewsProps> = (props: IvideotNewsProps) => {
   const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
   const [currentVideoIndex, setCurrentVideoIndex] = React.useState<number>(0);
   const videoRef = React.useRef<HTMLVideoElement>(null);
+  const [videos, setVideos] = React.useState<string[]>([]);
+
+  React.useEffect(() => {
+    fetchVideosFromSharePoint();
+  }, []);
 
   React.useEffect(() => {
     if (isPlaying && videoRef.current) {
@@ -19,41 +23,45 @@ const Video: React.FC<IvideotNewsProps> = (props: IvideotNewsProps) => {
     }
   }, [isPlaying, currentVideoIndex]);
 
+  const fetchVideosFromSharePoint = async () => {
+    try {
+      const response = await fetch(
+        `${props.context.pageContext.web.absoluteUrl}/_api/web/GetFolderByServerRelativeUrl('/sites/CnexiaForEveryone/Assets/Vd-HomePage')/Files`,
+        {
+          headers: {
+            Accept: 'application/json;odata=nometadata',
+          },
+        }
+      );
+
+      const data = await response.json();
+      const videoUrls = data.value.map((item: any) => item.ServerRelativeUrl);
+      setVideos(videoUrls);
+
+    } catch (error) {
+      console.error('Erreur lors de la récupération des vidéos :', error);
+    }
+  };
+
   const handleTogglePlay = () => {
     setIsPlaying(!isPlaying);
   };
 
-  const handleScroll = () => {
+  const scrollToNextVideo = () => {
     setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videos.length);
     setIsPlaying(false); // Pause the current video when switching
   };
 
-  const [videos, setVideos] = React.useState<string[]>([]);
-
-  React.useEffect(() => {
-    fetchVideosFromSharePoint();
-  }, []);
-
-  const fetchVideosFromSharePoint = async () => {
-    try {
-        const response = await fetch(
-            `${props.context.pageContext.web.absoluteUrl}/_api/web/GetFolderByServerRelativeUrl('/sites/CnexiaForEveryone/Assets/Vd-HomePage')/Files`,
-            {
-                headers: {
-                    Accept: 'application/json;odata=nometadata',
-                },
-            }
-        );
-
-        const data = await response.json();
-        const videoUrls = data.value.map((item: any) => item.ServerRelativeUrl); 
-        setVideos(videoUrls);
-
-    } catch (error) {
-        console.error('Erreur lors de la récupération des vidéos :', error);
-    }
-};
-
+  const scrollToPreviousVideo = () => {
+    setCurrentVideoIndex((prevIndex) => {
+      if (prevIndex === 0) {
+        return videos.length - 1;
+      } else {
+        return prevIndex - 1;
+      }
+    });
+    setIsPlaying(false); // Pause the current video when switching
+  };
 
   return (
     <div className={styles.video_container}>
@@ -79,13 +87,18 @@ const Video: React.FC<IvideotNewsProps> = (props: IvideotNewsProps) => {
                 <p style={{ fontWeight: 'bold', marginLeft: '10px' }}>Video:</p>
                 <p style={{ marginLeft: '10px' }}>Inside Cnexia Tech</p>
               </div>
-              <button style={{ marginRight: '6px', marginTop: '20px' }} onClick={handleScroll}>
-                <svg width="65" height="19" viewBox="0 0 101 29" fill="transparent" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="47.8421" height="28.8421" fill="transparent" />
-                  <rect x="52.0947" width="48.9052" height="28.8421" fill="transparent" />
-                  <path d="M74 5L82 14.5L74 24" stroke="#00966C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M27.231 5.01562L19.5915 14.5077L27.231 23.9998" stroke="#00966C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <button style={{ marginRight: '6px', marginTop: '20px' }} onClick={scrollToPreviousVideo}>
+                <svg width="30" height="18" viewBox="0 0 45 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="-0.00146484" width="30" height="18" fill="none" />
+                  <path d="M26.9224 4.18018L17.1155 13.987L26.9224 23.7939" stroke="#00966C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
+              </button>
+              <button style={{ marginRight: '6px', marginTop: '20px' }} onClick={scrollToNextVideo}>
+                <svg width="30" height="18" viewBox="0 0 46 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="-0.00146484" width="30" height="18" fill="none" />
+                  <path d="M19.4668 4.18018L29.2737 13.987L19.4668 23.7939" stroke="#00966C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+
               </button>
             </div>
           </div>
@@ -113,8 +126,6 @@ const Video: React.FC<IvideotNewsProps> = (props: IvideotNewsProps) => {
                       </filter>
                     </defs>
                   </svg>
-
-
                 </button>
               </div>
             </div>
@@ -124,5 +135,6 @@ const Video: React.FC<IvideotNewsProps> = (props: IvideotNewsProps) => {
     </div>
   );
 };
+
 
 export default Video;
