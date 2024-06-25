@@ -36,21 +36,24 @@ const Video: React.FC<IvideotNewsProps> = (props: IvideotNewsProps) => {
 
   const fetchVideosFromSharePoint = async () => {
     try {
-      const response = await fetch(
-        `${props.context.pageContext.web.absoluteUrl}/_api/web/lists/getByTitle('CommVideos')/items?$select=FileRef`,
-        {
-          headers: {
-            Accept: 'application/json;odata=nometadata',
-          },
-        }
-      );
-      const data = await response.json();
-      const videoUrls = data.value.map((item: any) => item.FileRef);
-      setVideos(videoUrls);
+        const response = await fetch(
+            `${props.context.pageContext.web.absoluteUrl}/_api/web/GetFolderByServerRelativeUrl('/sites/CnexiaForEveryone/Assets/Vd-HomePage')/Files`,
+            {
+                headers: {
+                    Accept: 'application/json;odata=nometadata',
+                },
+            }
+        );
+
+        const data = await response.json();
+        const videoUrls = data.value.map((item: any) => item.ServerRelativeUrl); 
+        setVideos(videoUrls);
+
     } catch (error) {
-      console.error('Error fetching videos:', error);
+        console.error('Erreur lors de la récupération des vidéos :', error);
     }
-  };
+};
+
 
   return (
     <div className={styles.video_container}>
